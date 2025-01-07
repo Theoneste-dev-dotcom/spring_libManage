@@ -1,9 +1,5 @@
 package com.example.library_management_startup.services;
 
-// User Service
-package com.example.library_management.services;
-
-
 import com.example.library_management_startup.entities.User;
 import com.example.library_management_startup.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

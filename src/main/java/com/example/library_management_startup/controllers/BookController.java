@@ -1,61 +1,49 @@
 package com.example.library_management_startup.controllers;
 
 import com.example.library_management_startup.entities.Book;
-
 import com.example.library_management_startup.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/books")
 public class BookController {
+
     @Autowired
     private BookService bookService;
 
-    @Autowired
-    private BorrowerService borrowerService;
-
-    // getting all books
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
-    //get specific book
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable long id) {
-        return bookService.getBookById(id);
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // add book
-    @PostMapping("/{author_id}")
-    public Book addBook(@PathVariable Long author_id,@RequestBody Book book) {
-        return bookService.saveBook(book, author_id);
-    }
-    // Add a borrower to a book
-    @PostMapping("/{bookId}/add-borrower")
-        public ResponseEntity<?> addBorrowerToBook(@PathVariable Long bookId, @RequestBody Borrower borrower) {
-            Book book = bookService.getBookById(bookId);
-            Borrower existingBorrower = borrowerService.getBorrowerById(borrower.getId());
-            // Add the borrower to the book's borrowers list
-            book.getBorrowers().add(existingBorrower);
-            return ResponseEntity.ok("Borrower added to the book successfully");
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookService.createBook(book);
     }
 
-    //update book
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable long id, @RequestBody Book book) {
-           bookService.updateBook(id, book);
-         return bookService.getBookById(id);
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        try {
+            return ResponseEntity.ok(bookService.updateBook(id, book));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    //delete book
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
-
 }
