@@ -1,7 +1,9 @@
 package com.example.library_management_startup.services;
 
 import com.example.library_management_startup.entities.Book;
+import com.example.library_management_startup.entities.Category;
 import com.example.library_management_startup.repositories.BookRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,8 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private CategoryService categoryService;
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
@@ -22,8 +26,18 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public Book createBook(Book book) {
-        return bookRepository.save(book);
+    public ResponseEntity<?> createBook(Book book, Long cat_id) {
+      try {
+          Category book_category = categoryService.getCategoryById(cat_id);
+           if(book_category == null) {
+              return ResponseEntity.ok("Category with that id not found");
+           }
+          book.setCategory(book_category);
+           bookRepository.save(book);
+           return ResponseEntity.ok(book);
+      }catch (Exception e) {
+          return ResponseEntity.badRequest().body("Failed to save the book");
+      }
     }
 
     public Book updateBook(Long id, Book updatedBook) {
@@ -32,13 +46,11 @@ public class BookService {
             book.setAuthor(updatedBook.getAuthor());
             book.setIsbn(updatedBook.getIsbn());
             book.setCategory(updatedBook.getCategory());
-            book.setTags(updatedBook.getTags());
             book.setPublisher(updatedBook.getPublisher());
             book.setPublicationDate(updatedBook.getPublicationDate());
             book.setLanguage(updatedBook.getLanguage());
             book.setTotalCopies(updatedBook.getTotalCopies());
             book.setAvailableCopies(updatedBook.getAvailableCopies());
-            book.setCoverImageUrl(updatedBook.getCoverImageUrl());
             book.setDescription(updatedBook.getDescription());
             return bookRepository.save(book);
         }).orElseThrow(() -> new RuntimeException("Book not found"));

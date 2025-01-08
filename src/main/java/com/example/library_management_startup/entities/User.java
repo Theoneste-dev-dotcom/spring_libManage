@@ -33,8 +33,6 @@ public class User {
 
     private String address;
 
-    private String profilePictureUrl;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 

@@ -3,7 +3,6 @@ package com.example.library_management_startup.services;
 import com.example.library_management_startup.entities.User;
 import com.example.library_management_startup.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +14,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -31,7 +28,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -42,7 +38,6 @@ public class UserService {
             user.setRole(updatedUser.getRole());
             user.setPhoneNumber(updatedUser.getPhoneNumber());
             user.setAddress(updatedUser.getAddress());
-            user.setProfilePictureUrl(updatedUser.getProfilePictureUrl());
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }

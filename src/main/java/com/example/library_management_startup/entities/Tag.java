@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -20,11 +21,15 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String name;
+    @ElementCollection
+    private List<String> name;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;

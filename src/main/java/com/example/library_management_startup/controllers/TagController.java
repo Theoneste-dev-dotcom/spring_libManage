@@ -27,9 +27,9 @@ public class TagController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Tag createTag(@RequestBody Tag tag) {
-        return tagService.createTag(tag);
+    @PostMapping("/{bookId}")
+    public ResponseEntity<?> createTag(@PathVariable("bookId") Long bookId, @RequestBody Tag tag) {
+        return tagService.createTag(tag, bookId);
     }
 
     @PutMapping("/{id}")

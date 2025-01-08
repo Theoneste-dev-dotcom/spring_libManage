@@ -31,9 +31,6 @@ public class Book {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ElementCollection
-    private List<String> tags;
-
     private String publisher;
 
     @Temporal(TemporalType.DATE)
@@ -44,8 +41,6 @@ public class Book {
     private int totalCopies;
 
     private int availableCopies;
-
-    private String coverImageUrl;
 
     @Column(columnDefinition = "TEXT")
     private String description;
